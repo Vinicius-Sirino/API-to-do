@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caderno de Tarefas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #efe9de;
+    --paper-raised: #f7f3ea;
+    --ink: #221f1a;
+    --ink-soft: #5b564c;
+    --rule: #d7cdb8;
+    --teal: #1f6f5c;
+    --teal-dark: #164e41;
+    --amber: #c98a2c;
+    --danger: #a3402f;
+    --radius: 3px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin: 0;
+    background: var(--paper);
+    background-image:
+      linear-gradient(var(--rule) 1px, transparent 1px);
+    background-size: 100% 2.1rem;
+    background-position: 0 7.4rem;
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    min-height: 100vh;
+    padding: 3rem 1.25rem 5rem;
+  }
+
+  .sheet{
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  header{
+    margin-bottom: 2.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 2px solid var(--ink);
+    text-align: center;
+  }
+
+  header h1{
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 700;
+    font-size: 2.1rem;
+    margin: 0 0 0.35rem;
+    letter-spacing: -0.01em;
+  }
+
+  header p{
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+  }
+
+  #status-banner{
+    display: none;
+    font-size: 0.85rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: var(--radius);
+    margin-bottom: 1.25rem;
+    border: 1px solid transparent;
+  }
+  #status-banner.show{ display: block; }
+  #status-banner.error{
+    background: #f5e2dd;
+    border-color: var(--danger);
+    color: #6d2a1e;
+  }
+  #status-banner.info{
+    background: #e4ede9;
+    border-color: var(--teal);
+    color: var(--teal-dark);
+  }
+
+  form#task-form{
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.1rem 1rem;
+    margin-bottom: 2.25rem;
+    box-shadow: 0 1px 0 var(--rule);
+  }
+
+  .field{ margin-bottom: 0.7rem; }
+  .field:last-of-type{ margin-bottom: 0; }
+
+  .field label{
+    display: block;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    margin-bottom: 0.3rem;
+  }
+
+  .field input, .field textarea{
+    width: 100%;
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: #fff;
+    color: var(--ink);
+  }
+
+  .field textarea{ resize: vertical; min-height: 3rem; }
+
+  .field input:focus, .field textarea:focus{
+    outline: 2px solid var(--teal);
+    outline-offset: 1px;
+  }
+
+  .form-row{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.9rem;
+  }
+
+  button{
+    font: inherit;
+    cursor: pointer;
+    border: none;
+    border-radius: var(--radius);
+  }
+
+  .btn-primary{
+    background: var(--teal);
+    color: #fff;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  .btn-primary:hover{ background: var(--teal-dark); }
+  .btn-primary:disabled{ opacity: 0.55; cursor: not-allowed; }
+
+  ul#task-list{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .task{
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.95rem 0.1rem;
+    border-bottom: 1px solid var(--rule);
+    align-items: flex-start;
+  }
+
+  .task-check{
+    margin-top: 0.2rem;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--teal);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .task-body{ flex: 1; min-width: 0; }
+
+  .task-title{
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.08rem;
+    font-weight: 600;
+    margin: 0 0 0.2rem;
+    word-break: break-word;
+  }
+
+  .task.done .task-title{
+    color: var(--ink-soft);
+    text-decoration: line-through;
+    text-decoration-color: var(--ink-soft);
+  }
+
+  .task-desc{
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .task.done .task-desc{ text-decoration: line-through; }
+
+  .task-actions{
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+  }
+
+  .icon-btn{
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+    padding: 0.3rem 0.55rem;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+  }
+  .icon-btn:hover{ border-color: var(--ink-soft); color: var(--ink); }
+  .icon-btn.delete:hover{ border-color: var(--danger); color: var(--danger); }
+
+  .edit-fields{ display: flex; flex-direction: column; gap: 0.4rem; }
+  .edit-fields input, .edit-fields textarea{
+    font: inherit;
+    padding: 0.4rem 0.5rem;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+  }
+  .edit-fields .edit-actions{ display: flex; gap: 0.5rem; margin-top: 0.15rem; }
+  .edit-fields .edit-actions button{ font-size: 0.8rem; padding: 0.35rem 0.7rem; }
+  .save-edit{ background: var(--teal); color: #fff; }
+  .cancel-edit{ background: transparent; border: 1px solid var(--rule); color: var(--ink-soft); }
+
+  #empty-state{
+    display: none;
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+  #empty-state.show{ display: block; }
+
+  #loading-state{
+    display: none;
+    text-align: center;
+    padding: 2rem;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+  }
+  #loading-state.show{ display: block; }
+
+  .count{
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    margin-bottom: 0.6rem;
+  }
+
+  @media (max-width: 480px){
+    header h1{ font-size: 1.7rem; }
+    .task-actions{ flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+  <header>
+    <h1>CADERNO DE TAREFAS</h1>
+    
+  </header>
+
+  <div id="status-banner"></div>
+
+  <form id="task-form">
+    <div class="field">
+      <label for="titulo">Título</label>
+      <input type="text" id="titulo" name="titulo" placeholder="O que precisa ser feito?" required maxlength="200">
+    </div>
+    <div class="field">
+      <label for="descricao">Descrição</label>
+      <textarea id="descricao" name="descricao" placeholder="Detalhes (opcional)"></textarea>
+    </div>
+    <div class="form-row">
+      <button type="submit" class="btn-primary" id="submit-btn">Adicionar tarefa</button>
+    </div>
+  </form>
+
+  <p class="count" id="count-label"></p>
+  <div id="loading-state">Carregando tarefas…</div>
+  <ul id="task-list"></ul>
+  <div id="empty-state">Nenhuma tarefa por aqui ainda. Adicione a primeira acima.</div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  const API_URL = 'http://localhost:8080/tarefas';
+
+  const form = document.getElementById('task-form');
+  const tituloInput = document.getElementById('titulo');
+  const descricaoInput = document.getElementById('descricao');
+  const submitBtn = document.getElementById('submit-btn');
+  const list = document.getElementById('task-list');
+  const emptyState = document.getElementById('empty-state');
+  const loadingState = document.getElementById('loading-state');
+  const banner = document.getElementById('status-banner');
+  const countLabel = document.getElementById('count-label');
+
+  let tasks = [];
+  let editingId = null;
+
+  function showBanner(message, type){
+    banner.textContent = message;
+    banner.className = 'show ' + (type || 'info');
+  }
+
+  function hideBanner(){
+    banner.className = '';
+    banner.textContent = '';
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
+  async function apiRequest(path, options){
+    const res = await fetch(API_URL + (path || ''), Object.assign({
+      headers: { 'Content-Type': 'application/json' }
+    }, options));
+    if (!res.ok) {
+      let detail = '';
+      try { detail = await res.text(); } catch (e) {}
+      throw new Error('HTTP ' + res.status + (detail ? ' — ' + detail : ''));
+    }
+    if (res.status === 204) return null;
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
+  }
+
+  async function loadTasks(){
+    loadingState.classList.add('show');
+    emptyState.classList.remove('show');
+    list.innerHTML = '';
+    try {
+      const data = await apiRequest('', { method: 'GET' });
+      tasks = Array.isArray(data) ? data : [];
+      hideBanner();
+      render();
+    } catch (err) {
+      showBanner('Não foi possível conectar à API em ' + API_URL + '. Verifique se o servidor está rodando. (' + err.message + ')', 'error');
+      tasks = [];
+      render();
+    } finally {
+      loadingState.classList.remove('show');
+    }
+  }
+
+  function render(){
+    list.innerHTML = '';
+
+    if (tasks.length === 0) {
+      emptyState.classList.add('show');
+      countLabel.textContent = '';
+      return;
+    }
+    emptyState.classList.remove('show');
+
+    const doneCount = tasks.filter(t => t.concluida).length;
+    countLabel.textContent = doneCount + ' de ' + tasks.length + ' concluídas';
+
+    tasks.forEach(task => {
+      list.appendChild(renderTask(task));
+    });
+  }
+
+  function renderTask(task){
+    const li = document.createElement('li');
+    li.className = 'task' + (task.concluida ? ' done' : '');
+
+    if (editingId === task.id) {
+      li.innerHTML = editTemplate(task);
+      wireEditEvents(li, task);
+      return li;
+    }
+
+    li.innerHTML =
+      '<input type="checkbox" class="task-check" ' + (task.concluida ? 'checked' : '') + '>' +
+      '<div class="task-body">' +
+        '<p class="task-title"></p>' +
+        (task.descricao ? '<p class="task-desc"></p>' : '') +
+      '</div>' +
+      '<div class="task-actions">' +
+        '<button type="button" class="icon-btn edit">Editar</button>' +
+        '<button type="button" class="icon-btn delete">Excluir</button>' +
+      '</div>';
+
+    li.querySelector('.task-title').textContent = task.titulo || '(sem título)';
+    const descEl = li.querySelector('.task-desc');
+    if (descEl) descEl.textContent = task.descricao;
+
+    li.querySelector('.task-check').addEventListener('change', (e) => {
+      toggleConcluida(task, e.target.checked);
+    });
+    li.querySelector('.edit').addEventListener('click', () => {
+      editingId = task.id;
+      render();
+    });
+    li.querySelector('.delete').addEventListener('click', () => {
+      deleteTask(task);
+    });
+
+    return li;
+  }
+
+  function editTemplate(task){
+    return (
+      '<div class="edit-fields" style="flex:1">' +
+        '<input type="text" class="edit-titulo" value="' + escapeHtml(task.titulo) + '" maxlength="200">' +
+        '<textarea class="edit-descricao">' + escapeHtml(task.descricao || '') + '</textarea>' +
+        '<div class="edit-actions">' +
+          '<button type="button" class="save-edit">Salvar</button>' +
+          '<button type="button" class="cancel-edit">Cancelar</button>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function wireEditEvents(li, task){
+    li.querySelector('.save-edit').addEventListener('click', () => {
+      const novoTitulo = li.querySelector('.edit-titulo').value.trim();
+      const novaDescricao = li.querySelector('.edit-descricao').value.trim();
+      if (!novoTitulo) {
+        showBanner('O título não pode ficar vazio.', 'error');
+        return;
+      }
+      updateTask(task, { titulo: novoTitulo, descricao: novaDescricao, concluida: task.concluida });
+    });
+    li.querySelector('.cancel-edit').addEventListener('click', () => {
+      editingId = null;
+      render();
+    });
+  }
+
+  async function toggleConcluida(task, concluida){
+    try {
+      await apiRequest('/' + task.id, {
+        method: 'PUT',
+        body: JSON.stringify({ titulo: task.titulo, descricao: task.descricao, concluida: concluida })
+      });
+      task.concluida = concluida;
+      hideBanner();
+      render();
+    } catch (err) {
+      showBanner('Erro ao atualizar a tarefa: ' + err.message, 'error');
+      render();
+    }
+  }
+
+  async function updateTask(task, payload){
+    try {
+      const updated = await apiRequest('/' + task.id, {
+        method: 'PUT',
+        body: JSON.stringify(payload)
+      });
+      Object.assign(task, updated || payload);
+      editingId = null;
+      hideBanner();
+      render();
+    } catch (err) {
+      showBanner('Erro ao salvar a tarefa: ' + err.message, 'error');
+    }
+  }
+
+  async function deleteTask(task){
+    const confirmed = window.confirm('Excluir "' + (task.titulo || 'esta tarefa') + '"?');
+    if (!confirmed) return;
+    try {
+      await apiRequest('/' + task.id, { method: 'DELETE' });
+      tasks = tasks.filter(t => t.id !== task.id);
+      hideBanner();
+      render();
+    } catch (err) {
+      showBanner('Erro ao excluir a tarefa: ' + err.message, 'error');
+    }
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const titulo = tituloInput.value.trim();
+    const descricao = descricaoInput.value.trim();
+    if (!titulo) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Adicionando…';
+    try {
+      const nova = await apiRequest('', {
+        method: 'POST',
+        body: JSON.stringify({ titulo: titulo, descricao: descricao, concluida: false })
+      });
+      tasks.push(nova || { id: Date.now(), titulo: titulo, descricao: descricao, concluida: false });
+      form.reset();
+      hideBanner();
+      render();
+    } catch (err) {
+      showBanner('Erro ao criar a tarefa: ' + err.message, 'error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Adicionar tarefa';
+    }
+  });
+
+  loadTasks();
+})();
+</script>
+
+</body>
+</html>
