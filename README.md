@@ -1,31 +1,5 @@
-# API-to-do
-📝 API To-Do (Gerenciamento de Tarefas)
-Uma API RESTful desenvolvida em Java com Spring Boot para o gerenciamento de tarefas (CRUD completo).
-
-🚀 Tecnologias Utilizadas
-Java
-Spring Boot (Web, Dados JPA)
-Banco de Dados H2 (Em memória)
-Lombok (Redução de código padrão)
-Maven (Gerenciamento de dependências)
-Postman (Testes de API)
-⚙️ Como Executar
-Clone este repositório em sua máquina local.
-Abra o projeto na sua IDE de preferência (IntelliJ, Eclipse, etc).
-Execute o arquivo principal TarefasApplication.java.
-A API estará disponível no endereço: http://localhost:8080/tarefas.
-🗄️ Acesso ao Banco de Dados (Console H2)
-O projeto utiliza um banco de dados em memória para testes rápidos. Para visualizar tabelas e dados:
-
-URL: http://localhost:8080/h2-console
-URL JDBC: jdbc:h2:mem:testdb
-Usuário: sa
-Senha: (deixar em branco)
-🔗 Pontos de extremidade da API
-Método	Rota	Descrição
-POST	/tarefas	Cria uma nova tarefa
-GET	/tarefas	Lista todas as tarefas cadastradas
-PUT	/tarefas/{id}	Atualizar os dados de uma tarefa existente
-DELETE	/tarefas/{id}	Exclui uma tarefa do banco de dados
-Exemplo de Corpo da Requisição (JSON) para POST/PUT:
-{ "titulo": "Estudar Spring Boot", "descricao": "Revisar anotações do Controller", "concluida": false }
+API To-Do (Gerenciamento de Tarefas)Uma API RESTful moderna e eficiente desenvolvida em Java com Spring Boot para o gerenciamento completo de tarefas (CRUD).🚀 Tecnologias UtilizadasJava & Spring Boot (Spring Web, Spring Data JPA)Banco de Dados H2 (Em memória para testes rápidos e práticos)Lombok (Redução de código boilerplate)Maven (Gerenciamento de dependências)Postman (Testes e validação de endpoints)⚙️ Como ExecutarClone este repositório em sua máquina local.Abra o projeto na sua IDE de preferência (IntelliJ IDEA, Eclipse, VS Code, etc.).Execute a classe principal TarefasApplication.java.A API estará disponível e pronta para uso no endereço:http://localhost:8080/tarefas🗄️ Acesso ao Banco de Dados (Console H2)O projeto utiliza um banco de dados em memória para facilitar os testes sem necessidade de instalações externas. Para visualizar e gerenciar as tabelas e dados:URL do Console: http://localhost:8080/h2-consoleJDBC URL: jdbc:h2:mem:testdbUsuário: saSenha: (deixe em branco)🔗 Endpoints da APIMétodoRotaDescriçãoPOST/tarefasCria uma nova tarefaGET/tarefasLista todas as tarefas cadastradasPUT/tarefas/{id}Atualiza os dados de uma tarefa existenteDELETE/tarefas/{id}Exclui uma tarefa do banco de dados📦 Exemplo de Corpo da Requisição (JSON)Utilize o formato abaixo no corpo (Body) para as requisições do tipo POST e PUT:JSON{
+  "titulo": "Estudar Spring Boot",
+  "descricao": "Revisar anotações do Controller",
+  "concluida": false
+}
