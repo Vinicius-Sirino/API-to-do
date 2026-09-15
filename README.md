@@ -1,6 +1,6 @@
 # 📝 API To-Do (Gerenciamento de Tarefas)
 
-Uma API RESTful desenvolvida em Java com Spring Boot para o gerenciamento de tarefas (CRUD completo). Este projeto foi construído como parte da estruturação inicial para o TCC I do curso de Análise e Desenvolvimento de Sistemas da Fatec Americana.
+Uma API RESTful desenvolvida em Java com Spring Boot para o gerenciamento de tarefas (CRUD completo). Este projeto foi construído como parte de aprendizagem, no curso de Análise e Desenvolvimento de Sistemas da Fatec Americana.
 
 ## 🚀 Tecnologias Utilizadas
 * **Java**
